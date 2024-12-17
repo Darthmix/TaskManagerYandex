@@ -51,5 +51,4 @@ public abstract class Task {
 
     @Override
     public abstract String toString();
-
 }
