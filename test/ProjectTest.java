@@ -1,4 +1,5 @@
 import model.*;
+import org.junit.jupiter.api.BeforeEach;
 import service.*;
 
 import org.junit.jupiter.api.Assertions;
@@ -8,9 +9,15 @@ import java.util.List;
 
 public class ProjectTest {
 
+    private TaskManager taskManager;
+
+    @BeforeEach
+    public void initializeManagers() {
+        taskManager = Managers.getDefaultTaskManager();
+    }
+
     @Test
     public void checkHistorySequence() {
-        InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefaultTaskManager();
 
         // Создаём 2 обычные задачи, сохраняем их
         SingleTask singleTask1 = new SingleTask("CommonTask1", "Common task 1");
@@ -31,7 +38,6 @@ public class ProjectTest {
 
     @Test
     public void checkHistoryRemove() {
-        InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefaultTaskManager();
 
         // Создаём первый эпик с 2 подзадачами и сохраняем
         EpicTask epicTask1 = new EpicTask("EpicTask1", "Epic task 1");
@@ -61,7 +67,6 @@ public class ProjectTest {
 
     @Test
     public void tasksEquality() {
-        InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefaultTaskManager();
 
         // Создаём 2 обычные задачи, сохраняем их
         SingleTask singleTask1 = new SingleTask("CommonTask1", "Common task 1");
@@ -88,7 +93,6 @@ public class ProjectTest {
 
     @Test
     public void checkCreateDifferentTypeTasks() {
-        InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefaultTaskManager();
 
         // Создаём 2 обычные задачи, сохраняем их
         SingleTask singleTask1 = new SingleTask("CommonTask1", "Common task 1");

@@ -9,7 +9,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     private final Map<Integer, Node<Task>> linkedHashList;
 
     public InMemoryHistoryManager() {
-        this.historyTasks = new CustomDoublyLinkedList<Task>();
+        this.historyTasks = new CustomDoublyLinkedList<>();
         this.linkedHashList = new HashMap<>();
     }
 
@@ -40,11 +40,10 @@ public class InMemoryHistoryManager implements HistoryManager {
         return List.copyOf(historyTasks.getList());
     }
 
-    class Node<T> {
-
-        public T data;
-        public Node<T> next;
-        public Node<T> prev;
+    public static class Node<T> {
+        private final T data;
+        private Node<T> next;
+        private Node<T> prev;
 
         public Node(T data) {
             this.data = data;
@@ -59,10 +58,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    public class CustomDoublyLinkedList<T> {
-        public Node<T> head;
-        public Node<T> tail;
-        private int size = 0;
+    public static class CustomDoublyLinkedList<T> {
+        private Node<T> head;
+        private Node<T> tail;
 
         public void linkLast(T element) {
             final Node<T> newNode;
@@ -75,7 +73,6 @@ public class InMemoryHistoryManager implements HistoryManager {
                 oldTail.next = newNode;
             }
             tail = newNode;
-            size++;
         }
 
         public void removeNode(Node<T> node) {
@@ -94,7 +91,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             if (tail == node) tail = node.prev;
             node.prev = null;
             node.next = null;
-            size--;
         }
 
         public List<T> getList() {
