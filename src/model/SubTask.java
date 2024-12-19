@@ -12,7 +12,7 @@ public class SubTask extends Task {
         this(name, description, epicTaskId);
         this.statusTask = statusTask;
     }
-    
+
 
     public void removeFromEpic(EpicTask epicTask) {
         epicTask.removeSubTask(this);

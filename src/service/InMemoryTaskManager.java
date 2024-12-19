@@ -58,19 +58,23 @@ public class InMemoryTaskManager implements TaskManager {
         switch (task.getTypeTask()) {
             case REG:
                 taskById.remove(task.getId());
+                historyManager.remove(task.getId());
                 break;
             case SUB:
                 SubTask subTask = (SubTask) task;
                 subTask.removeFromEpic((EpicTask) taskById.get(subTask.getEpicId()));
                 taskById.remove(task.getId());
+                historyManager.remove(task.getId());
                 break;
             case EPIC:
                 EpicTask epicTask = (EpicTask) task;
                 List<SubTask> subTasks = epicTask.getSubTasks();
                 for (SubTask subtask : subTasks) {
                     taskById.remove(subtask.getId());
+                    historyManager.remove(subtask.getId());
                 }
                 taskById.remove(task.getId());
+                historyManager.remove(task.getId());
                 break;
         }
     }
