@@ -1,7 +1,6 @@
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import service.*;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +13,7 @@ public class ProjectTest {
     @BeforeEach
     public void initializeManagers() {
         taskManager = Managers.getDefaultTaskManager();
+
     }
 
     @Test

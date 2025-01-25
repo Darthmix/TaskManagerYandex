@@ -10,7 +10,8 @@ public class SingleTask extends Task {
         super(name, description, statusTask);
     }
 
-    public StatusTask getStatus() {
+    @Override
+    public StatusTask getStatusTask() {
         return statusTask;
     }
 
@@ -25,6 +26,11 @@ public class SingleTask extends Task {
 
     @Override
     public String toString() {
-        return "SingleTask{" + "id=" + this.getId() + ", name='" + this.getName() + '\'' + ", description='" + this.getDescription() + '\'' + ", statusTask=" + statusTask + '}' + '\n';
+        return String.format("%d,%s,%s,%s,%s",
+                this.getId(),
+                this.getTypeTask(),
+                this.getName(),
+                this.getStatusTask(),
+                this.getDescription());
     }
 }
