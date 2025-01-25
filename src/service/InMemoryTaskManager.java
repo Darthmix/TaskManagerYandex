@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class    InMemoryTaskManager implements TaskManager {
+public class InMemoryTaskManager implements TaskManager {
 
     private final Map<Integer, Task> taskById;  // Основной хеш список всех тасок
     private Integer taskIdGenerator; // Объект генерации новых ID для тасок
@@ -132,7 +132,8 @@ public class    InMemoryTaskManager implements TaskManager {
     private Integer getNextFreeId() {
         return taskIdGenerator++;
     }
-    public  void setNextFreeId(Integer id){
+
+    public void setNextFreeId(Integer id) {
         taskIdGenerator = id;
     }
 
