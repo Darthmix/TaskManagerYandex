@@ -14,8 +14,7 @@ public abstract class Managers {
     }
 
     public static TaskManager getDefaultFileBackedTaskManager() {
-        return FileBackedTaskManager.loadFromFile(Path.of(PATH_TO_DATA));
-        //return  new FileBackedTaskManager(Path.of(PATH_TO_DATA));
+        return new FileBackedTaskManager(Path.of(PATH_TO_DATA));
     }
 
     public static TaskManager getDefaultTaskManager() {

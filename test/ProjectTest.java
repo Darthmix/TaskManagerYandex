@@ -13,7 +13,6 @@ public class ProjectTest {
     @BeforeEach
     public void initializeManagers() {
         taskManager = Managers.getDefaultTaskManager();
-
     }
 
     @Test
