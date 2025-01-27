@@ -26,7 +26,8 @@ public class SubTask extends Task {
         return epicTaskId;
     }
 
-    public StatusTask getStatus() {
+    @Override
+    public StatusTask getStatusTask() {
         return statusTask;
     }
 
@@ -37,6 +38,12 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "SubTask{" + "id=" + this.getId() + ", name='" + this.getName() + '\'' + ", description='" + this.getDescription() + '\'' + ", statusTask=" + this.getStatus() + '}' + '\n';
+        return String.format("%d,%s,%s,%s,%s,%d",
+                this.getId(),
+                this.getTypeTask(),
+                this.getName(),
+                this.getStatusTask(),
+                this.getDescription(),
+                this.getEpicId());
     }
 }

@@ -24,6 +24,11 @@ public class EpicTask extends Task {
         return TypeTask.EPIC;
     }
 
+    @Override
+    public StatusTask getStatusTask() {
+        return statusTask;
+    }
+
     public void removeSubTask(SubTask subTask) {
         this.subTasks.remove(subTask);
         this.statusTask = calcStatus();
@@ -45,7 +50,7 @@ public class EpicTask extends Task {
 
     private boolean isAllSubTasksByStatusTask(StatusTask statusTask) {
         for (SubTask subTask : this.subTasks) {
-            if (!subTask.getStatus().equals(statusTask)) {
+            if (!subTask.getStatusTask().equals(statusTask)) {
                 return false;
             }
         }
@@ -64,6 +69,11 @@ public class EpicTask extends Task {
 
     @Override
     public String toString() {
-        return "EpicTask{" + "id=" + this.getId() + ", name='" + this.getName() + '\'' + ", description='" + this.getDescription() + '\'' + ", statusTask=" + this.statusTask + ", subtasks=" + '\n' + this.subTasks + '}' + '\n';
+        return String.format("%d,%s,%s,%s,%s",
+                this.getId(),
+                this.getTypeTask(),
+                this.getName(),
+                this.getStatusTask(),
+                this.getDescription());
     }
 }

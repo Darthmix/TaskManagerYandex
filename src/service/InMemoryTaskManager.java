@@ -133,6 +133,10 @@ public class InMemoryTaskManager implements TaskManager {
         return taskIdGenerator++;
     }
 
+    public void setNextFreeId(Integer id) {
+        taskIdGenerator = id;
+    }
+
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
