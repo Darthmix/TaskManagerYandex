@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 public class EpicTask extends Task {
     private final List<SubTask> subTasks;
@@ -62,30 +61,15 @@ public class EpicTask extends Task {
         return subTasks.stream().allMatch(subTask -> subTask.getStatusTask().equals(statusTask));
     }
 
-    public void calcTime(){
-
-        if (this.subTasks.isEmpty()){
+    public void calcTime() {
+        if (this.subTasks.isEmpty()) {
             setTimeFields(NO_TIME, NO_TIME, Duration.ofMinutes(0));
             return;
-        };
-
-        LocalDateTime startTime = subTasks.stream()
-                .map(subTask -> subTask.getStartTime())
-                .filter(time -> !time.isEqual(NO_TIME))
-                .min(LocalDateTime::compareTo)
-                .orElse(NO_TIME);
-
-        LocalDateTime endTime = subTasks.stream()
-                .map(subTask -> subTask.getEndTime())
-                .filter(time -> !time.isEqual(NO_TIME))
-                .max(LocalDateTime::compareTo)
-                .orElse(NO_TIME);
-
-        Duration duration = subTasks.stream()
-                .map(subTask -> subTask.getDuration())
-                .reduce(Duration.ZERO, Duration::plus);
-
-        setTimeFields(startTime,endTime,duration);
+        }
+        LocalDateTime startTime = subTasks.stream().map(subTask -> subTask.getStartTime()).filter(time -> !time.isEqual(NO_TIME)).min(LocalDateTime::compareTo).orElse(NO_TIME);
+        LocalDateTime endTime = subTasks.stream().map(subTask -> subTask.getEndTime()).filter(time -> !time.isEqual(NO_TIME)).max(LocalDateTime::compareTo).orElse(NO_TIME);
+        Duration duration = subTasks.stream().map(subTask -> subTask.getDuration()).reduce(Duration.ZERO, Duration::plus);
+        setTimeFields(startTime, endTime, duration);
     }
 
     public StatusTask calcStatus() {
@@ -111,11 +95,6 @@ public class EpicTask extends Task {
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s",
-                this.getId(),
-                this.getTypeTask(),
-                this.getName(),
-                this.getStatusTask(),
-                this.getDescription());
+        return String.format("%d,%s,%s,%s,%s", this.getId(), this.getTypeTask(), this.getName(), this.getStatusTask(), this.getDescription());
     }
 }
