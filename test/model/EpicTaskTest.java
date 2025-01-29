@@ -1,13 +1,12 @@
 package model;
-import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTaskTest {
     private final Task epicTask1 = new EpicTask("EpicTask1", "Epic task 1");
     private final Task epicTask2 = new EpicTask("EpicTask2", "Epic task 2");
-
 
     @Test
     void tasksEqualSameIdTest() {

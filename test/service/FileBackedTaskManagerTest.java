@@ -6,7 +6,6 @@ import model.SubTask;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Path;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,8 +14,9 @@ import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
-public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager>{
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     private File tempFile;
+
     private void createTestFile() {
         try {
             tempFile = File.createTempFile("TestTaskStorage", ".csv");
@@ -64,10 +64,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     @Test
     void readTasksFromFile() {
 
-        String[] content = new String[]{"id,type,name,status,description,startTime,duration,epic",
-                "0,REG,CommonTask1,NEW,Common task 1,00:00 01.01.0001,0",
-                "1,EPIC,EpicTask1,IN_PROGRESS,Epic task 1",
-                "2,SUB,SubTask1,IN_PROGRESS,Subtask 1,00:00 01.01.0001,0,1"};
+        String[] content = new String[]{"id,type,name,status,description,startTime,duration,epic", "0,REG,CommonTask1,NEW,Common task 1,00:00 01.01.0001,0", "1,EPIC,EpicTask1,IN_PROGRESS,Epic task 1", "2,SUB,SubTask1,IN_PROGRESS,Subtask 1,00:00 01.01.0001,0,1"};
 
         try (Writer fileWriter = new FileWriter(tempFile, StandardCharsets.UTF_8)) {
             fileWriter.write(String.join("\n", content));

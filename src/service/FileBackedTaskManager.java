@@ -10,7 +10,6 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -148,6 +147,4 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super.clearSubTasks();
         save();
     }
-
-
 }

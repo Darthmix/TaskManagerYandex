@@ -6,16 +6,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ManagersTest {
     @Test
-    void  ManagerReturnTaskManagerTest(){
+    void ManagerReturnTaskManagerTest() {
         assertInstanceOf(TaskManager.class, Managers.getDefaultTaskManager());
     }
+
     @Test
     void ManagerReturnHistoryManagerTest() {
         assertInstanceOf(HistoryManager.class, Managers.getDefaultHistory());
     }
 
     @Test
-    void  ManagerReturnFileBackedTaskManagerTest(){
+    void ManagerReturnFileBackedTaskManagerTest() {
         assertInstanceOf(FileBackedTaskManager.class, Managers.getDefaultFileBackedTaskManager());
     }
 }
