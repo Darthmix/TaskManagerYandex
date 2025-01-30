@@ -4,6 +4,8 @@ import model.EpicTask;
 import model.SingleTask;
 import model.SubTask;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -26,6 +28,12 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         }
     }
 
+    private void clearTasks(){
+        taskManager.clearSingleTasks();
+        taskManager.clearEpicTasks();
+        taskManager.clearSubTasks();
+    }
+
     @Override
     public FileBackedTaskManager createTestManager() {
         createTestFile();
@@ -34,6 +42,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
     @Test
     void saveAndLoadEmptyFile() {
+        clearTasks(); 
         Assertions.assertTrue(taskManager.getSingleTasks().isEmpty(), "Список обычных задач не пуст");
         Assertions.assertTrue(taskManager.getEpicTasks().isEmpty(), "Список эпиков задач не пуст");
         Assertions.assertTrue(taskManager.getSubTasks().isEmpty(), "Список подзадач задач не пуст");
@@ -45,7 +54,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
     @Test
     void saveTasksToFile() throws IOException {
-
+        clearTasks();
         SingleTask singleTask1 = new SingleTask("CommonTask1", "Common task 1", LocalDateTime.now(), 15);
         taskManager.createTask(singleTask1);
         EpicTask epicTask1 = new EpicTask("EpicTask1", "Epic task 1");
@@ -63,7 +72,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
     @Test
     void readTasksFromFile() {
-
+        clearTasks();
         String[] content = new String[]{"id,type,name,status,description,startTime,duration,epic", "0,REG,CommonTask1,NEW,Common task 1,00:00 01.01.0001,0", "1,EPIC,EpicTask1,IN_PROGRESS,Epic task 1", "2,SUB,SubTask1,IN_PROGRESS,Subtask 1,00:00 01.01.0001,0,1"};
 
         try (Writer fileWriter = new FileWriter(tempFile, StandardCharsets.UTF_8)) {
