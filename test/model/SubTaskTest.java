@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SubTaskTest {
     private final EpicTask epicTask1 = new EpicTask("EpicTask1", "Epic task 1");
     private final SubTask subTask1 = new SubTask("SubTask1", "Subtask 1", epicTask1.getId());
-    private final SubTask subTask2= new SubTask("SubTask2", "Subtask 2", epicTask1.getId());
+    private final SubTask subTask2 = new SubTask("SubTask2", "Subtask 2", epicTask1.getId());
 
     @Test
     void tasksEqualSameIdTest() {
@@ -23,17 +23,13 @@ class SubTaskTest {
     }
 
     @Test
-    void removeSubTaskFromEpicTest(){
-        List<SubTask> subTasks = new ArrayList<>();
-
+    void removeSubTaskFromEpicTest() {
         subTask1.setId(1);
         subTask2.setId(2);
-
         epicTask1.modifySubTask(subTask1);
         epicTask1.modifySubTask(subTask2);
         subTask1.removeFromEpic(epicTask1);
-        subTasks = epicTask1.getSubTasks();
-
+        List<SubTask> subTasks = epicTask1.getSubTasks();
         assertFalse(subTasks.contains(subTask1), "Удаление подзадачи не работает");
     }
 }

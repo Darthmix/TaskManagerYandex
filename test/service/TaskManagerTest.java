@@ -15,65 +15,46 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     protected T taskManager;
     protected SingleTask singleTask;
-    protected EpicTask epicTask1;
+    protected EpicTask epicTask;
     protected SubTask subTask1;
     protected SubTask subTask2;
+    protected LocalDateTime startTime;
 
     protected abstract T createTestManager();
 
     @BeforeEach
     void initialize() {
+        startTime = LocalDateTime.now();
         taskManager = createTestManager();
+        singleTask = new SingleTask("CommonTask1", "Common task 1");
+        taskManager.createTask(singleTask);
+        epicTask = new EpicTask("EpicTask1", "Epic task 1");
+        taskManager.createTask(epicTask);
+        subTask1 = new SubTask("SubTask1", "Subtask 1", epicTask.getId());
+        taskManager.createTask(subTask1);
+        subTask2 = new SubTask("SubTask2", "Subtask 2", epicTask.getId());
+        taskManager.createTask(subTask2);
     }
 
     @Test
     void checkCreateDifferentTypeTasks() {
-        singleTask = new SingleTask("CommonTask1", "Common task 1");
-        taskManager.createTask(singleTask);
-        epicTask1 = new EpicTask("EpicTask1", "Epic task 1");
-        taskManager.createTask(epicTask1);
-        subTask1 = new SubTask("SubTask1", "Subtask 1", epicTask1.getId());
-        taskManager.createTask(subTask1);
-        subTask2 = new SubTask("SubTask2", "Subtask 2", epicTask1.getId());
-        taskManager.createTask(subTask2);
-
-        final List<Task> singleTasks = taskManager.getSingleTasks();
-        assertNotNull(singleTasks, "Обычные задачи не создаются");
-
-        final List<Task> epicTasks = taskManager.getEpicTasks();
-        assertNotNull(epicTasks, "Эпики задачи  не создаются");
-
-        final List<Task> subTasks = taskManager.getSubTasks();
-        assertNotNull(epicTasks, "Подзадачи задачи  не создаются");
+        assertNotNull(taskManager.getSingleTasks(), "Обычные задачи не создаются");
+        assertNotNull(taskManager.getEpicTasks(), "Эпики задачи  не создаются");
+        assertNotNull(taskManager.getSubTasks(), "Подзадачи задачи  не создаются");
     }
 
     @Test
     public void tasksEquality() {
 
-        // Создаём 2 обычные задачи, сохраняем их
-        SingleTask singleTask1 = new SingleTask("CommonTask1", "Common task 1", LocalDateTime.now(), 15);
-        taskManager.createTask(singleTask1);
+        SingleTask singleTaskNew = new SingleTask("CommonTask1", "Common task 1", startTime, 15);
+        taskManager.createTask(singleTaskNew);
 
-        SingleTask singleTask2 = new SingleTask("CommonTask2", "Common task 2");
-        taskManager.createTask(singleTask2);
-
-        List<Task> singleTasks = taskManager.getSingleTasks();
-        Task singleTaskTmp = taskManager.getTaskById(0);
-        assertNotNull(singleTask1, "Задача не найдена!!!!");
-        assertEquals(singleTasks.get(0), singleTaskTmp, "Задачи не совпадают!!!");
+        assertNotNull(singleTaskNew, "Задача не найдена!!!!");
+        assertEquals(taskManager.getSingleTasks().get(1), taskManager.getTaskById(4), "Задачи не совпадают!!!");
     }
 
     @Test
     void checkDeleteAllTasks() {
-        singleTask = new SingleTask("CommonTask1", "Common task 1");
-        taskManager.createTask(singleTask);
-        epicTask1 = new EpicTask("EpicTask1", "Epic task 1");
-        taskManager.createTask(epicTask1);
-        subTask1 = new SubTask("SubTask1", "Subtask 1", epicTask1.getId());
-        taskManager.createTask(subTask1);
-        subTask2 = new SubTask("SubTask2", "Subtask 2", epicTask1.getId());
-        taskManager.createTask(subTask2);
-
         taskManager.clearSingleTasks();
         assertTrue(taskManager.getSingleTasks().isEmpty(), "Обычные задачи не удаляются");
 
@@ -86,68 +67,52 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void checkEpicStatusWithNewStatus() {
-        epicTask1 = new EpicTask("EpicTask1", "Epic task 1");
-        taskManager.createTask(epicTask1);
-        subTask1 = new SubTask("SubTask1", "Subtask 1", epicTask1.getId());
-        taskManager.createTask(subTask1);
-        subTask2 = new SubTask("SubTask2", "Subtask 2", epicTask1.getId());
-        taskManager.createTask(subTask2);
-        assertEquals(StatusTask.NEW, epicTask1.getStatusTask(), "Статус эпика не верный");
+        assertEquals(StatusTask.NEW, epicTask.getStatusTask(), "Статус эпика не верный");
     }
 
     @Test
     void checkEpicStatusWithDoneStatus() {
-        epicTask1 = new EpicTask("EpicTask1", "Epic task 1");
-        taskManager.createTask(epicTask1);
-        subTask1 = new SubTask("SubTask1", "Subtask 1", epicTask1.getId(), StatusTask.DONE);
-        taskManager.createTask(subTask1);
-        subTask2 = new SubTask("SubTask2", "Subtask 2", epicTask1.getId(), StatusTask.DONE);
-        taskManager.createTask(subTask2);
-        assertEquals(StatusTask.DONE, epicTask1.getStatusTask(), "Статус эпика не верный");
+        subTask1.setStatus(StatusTask.DONE);
+        taskManager.updateTask(subTask1);
+        subTask2.setStatus(StatusTask.DONE);
+        taskManager.updateTask(subTask2);
+        assertEquals(StatusTask.DONE, epicTask.getStatusTask(), "Статус эпика не верный");
     }
 
     @Test
     void checkEpicStatusWithInProgressStatus() {
-        epicTask1 = new EpicTask("EpicTask1", "Epic task 1");
-        taskManager.createTask(epicTask1);
-        subTask1 = new SubTask("SubTask1", "Subtask 1", epicTask1.getId(), StatusTask.IN_PROGRESS);
-        taskManager.createTask(subTask1);
-        subTask2 = new SubTask("SubTask2", "Subtask 2", epicTask1.getId(), StatusTask.IN_PROGRESS);
-        taskManager.createTask(subTask2);
-        assertEquals(StatusTask.IN_PROGRESS, epicTask1.getStatusTask(), "Статус эпика не верный");
+        subTask1.setStatus(StatusTask.IN_PROGRESS);
+        taskManager.updateTask(subTask1);
+        subTask2.setStatus(StatusTask.IN_PROGRESS);
+        taskManager.updateTask(subTask2);
+        assertEquals(StatusTask.IN_PROGRESS, epicTask.getStatusTask(), "Статус эпика не верный");
     }
 
     @Test
     void checkEpicStatusWithNewAndDoneStatus() {
-        epicTask1 = new EpicTask("EpicTask1", "Epic task 1");
-        taskManager.createTask(epicTask1);
-        subTask1 = new SubTask("SubTask1", "Subtask 1", epicTask1.getId(), StatusTask.NEW);
-        taskManager.createTask(subTask1);
-        subTask2 = new SubTask("SubTask2", "Subtask 2", epicTask1.getId(), StatusTask.DONE);
-        taskManager.createTask(subTask2);
-        assertEquals(StatusTask.IN_PROGRESS, epicTask1.getStatusTask(), "Статус эпика не верный");
+        subTask1.setStatus(StatusTask.NEW);
+        taskManager.updateTask(subTask1);
+        subTask2.setStatus(StatusTask.DONE);
+        taskManager.updateTask(subTask2);
+        assertEquals(StatusTask.IN_PROGRESS, epicTask.getStatusTask(), "Статус эпика не верный");
     }
 
     @Test
     void checkEpicTime() {
-        LocalDateTime startTime = LocalDateTime.now();
-        epicTask1 = new EpicTask("EpicTask1", "Epic task 1");
-        taskManager.createTask(epicTask1);
-        subTask1 = new SubTask("SubTask1", "Subtask 1", startTime, 30, epicTask1.getId());
+        subTask1 = new SubTask("SubTask1", "Subtask 1", startTime, 30, epicTask.getId());
         taskManager.createTask(subTask1);
-        subTask2 = new SubTask("SubTask2", "Subtask 2", startTime.plusHours(1), 30, epicTask1.getId());
+        subTask2 = new SubTask("SubTask2", "Subtask 2", startTime.plusHours(1), 30, epicTask.getId());
         taskManager.createTask(subTask2);
 
-        assertEquals(startTime, taskManager.getTaskById(0).getStartTime(), "Стартовое время эпика не верно");
-        assertEquals(subTask2.getEndTime(), taskManager.getTaskById(0).getEndTime(), "Финальное время эпика не верно");
+        assertEquals(startTime, taskManager.getTaskById(1).getStartTime(), "Стартовое время эпика не верно");
+        assertEquals(subTask2.getEndTime(), taskManager.getTaskById(1).getEndTime(), "Финальное время эпика не верно");
 
         Duration duration = subTask1.getDuration().plus(subTask2.getDuration());
-        assertEquals(duration, taskManager.getTaskById(0).getDuration(), "Длительность эпике не совпадает с длительностью подзадач");
+        assertEquals(duration, taskManager.getTaskById(1).getDuration(), "Длительность эпике не совпадает с длительностью подзадач");
     }
 
     @Test
     void checkTimeOverlap() {
-        LocalDateTime startTime = LocalDateTime.now();
         SingleTask singleTask1 = new SingleTask("CommonTask1", "Common task 1", startTime, 30);
         taskManager.createTask(singleTask1);
         SingleTask singleTask2 = new SingleTask("CommonTask2", "Common task 2", startTime.plus(Duration.ofMinutes(15)), 30);
@@ -161,7 +126,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void checkTasksBySortedByPriority() {
-        LocalDateTime startTime = LocalDateTime.now();
         SingleTask singleTaskNoTime = new SingleTask("CommonTask1", "Common task 1");
         taskManager.createTask(singleTaskNoTime);
         SingleTask singleTaskWithTime1 = new SingleTask("CommonTask2", "Common task 2", startTime, 30);

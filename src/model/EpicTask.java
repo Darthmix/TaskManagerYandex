@@ -66,9 +66,9 @@ public class EpicTask extends Task {
             setTimeFields(NO_TIME, NO_TIME, Duration.ofMinutes(0));
             return;
         }
-        LocalDateTime startTime = subTasks.stream().map(subTask -> subTask.getStartTime()).filter(time -> !time.isEqual(NO_TIME)).min(LocalDateTime::compareTo).orElse(NO_TIME);
-        LocalDateTime endTime = subTasks.stream().map(subTask -> subTask.getEndTime()).filter(time -> !time.isEqual(NO_TIME)).max(LocalDateTime::compareTo).orElse(NO_TIME);
-        Duration duration = subTasks.stream().map(subTask -> subTask.getDuration()).reduce(Duration.ZERO, Duration::plus);
+        LocalDateTime startTime = subTasks.stream().map(Task::getStartTime).filter(time -> !time.isEqual(NO_TIME)).min(LocalDateTime::compareTo).orElse(NO_TIME);
+        LocalDateTime endTime = subTasks.stream().map(Task::getEndTime).filter(time -> !time.isEqual(NO_TIME)).max(LocalDateTime::compareTo).orElse(NO_TIME);
+        Duration duration = subTasks.stream().map(Task::getDuration).reduce(Duration.ZERO, Duration::plus);
         setTimeFields(startTime, endTime, duration);
     }
 

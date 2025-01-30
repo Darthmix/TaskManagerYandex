@@ -8,10 +8,6 @@ public class SingleTask extends Task {
         super(name, description, StatusTask.NEW);
     }
 
-    public SingleTask(String name, String description, StatusTask statusTask) {
-        super(name, description, statusTask);
-    }
-
     public SingleTask(String name, String description, LocalDateTime startTime, int durationInMinutes) {
         super(name, description, StatusTask.NEW, startTime, durationInMinutes);
     }

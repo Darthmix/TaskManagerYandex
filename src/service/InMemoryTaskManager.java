@@ -2,7 +2,6 @@ package service;
 
 import model.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -36,14 +36,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private List<Task> getTasksByType(TypeTask typeTask) {
-        List<Task> tasks = new ArrayList<>();
-        for (Task task : taskById.values()) {
-            if (task.getTypeTask().equals(typeTask)) {
-                historyManager.add(task);
-                tasks.add(task);
-            }
-        }
-        return tasks;
+        return taskById.values().stream().filter(task -> task.getTypeTask().equals(typeTask)).peek(historyManager::add).collect(Collectors.toList());
     }
 
     @Override
@@ -77,11 +70,10 @@ public class InMemoryTaskManager implements TaskManager {
                 break;
             case EPIC:
                 EpicTask epicTask = (EpicTask) task;
-                List<SubTask> subTasks = epicTask.getSubTasks();
-                for (SubTask subtask : subTasks) {
-                    taskById.remove(subtask.getId());
-                    historyManager.remove(subtask.getId());
-                }
+                epicTask.getSubTasks().stream().forEach(subTaskTmp -> {
+                    taskById.remove(subTaskTmp.getId());
+                    historyManager.remove(subTaskTmp.getId());
+                });
                 taskById.remove(task.getId());
                 historyManager.remove(task.getId());
                 break;
@@ -89,10 +81,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void clearByType(TypeTask typeTask) {
-        List<Task> tasks = getTasksByType(typeTask);
-        for (Task task : tasks) {
-            removeTask(task.getId());
-        }
+        getTasksByType(typeTask).stream().forEach(task -> removeTask(task.getId()));
     }
 
     @Override
@@ -197,15 +186,4 @@ public class InMemoryTaskManager implements TaskManager {
         if (!task.getStartTime().isEqual(NO_TIME)) prioritizedTasks.add(task);
     }
 
-    public void printTasks() {
-        for (Task task : taskById.values()) {
-            System.out.println(task);
-        }
-    }
-
-    public void printPrioritizedTasks() {
-        for (Task task : prioritizedTasks) {
-            System.out.println(task);
-        }
-    }
 }
