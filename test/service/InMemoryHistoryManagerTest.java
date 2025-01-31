@@ -57,12 +57,12 @@ class InMemoryHistoryManagerTest {
         SubTask subTask3 = new SubTask("SubTask3", "Subtask 3", epicTask2.getId());
         taskManager.createTask(subTask3);
 
-        List<Task> epicTasks = taskManager.getEpicTasks();
+        taskManager.getEpicTasks();
 
         List<Task> historyTasksFirstOccur = taskManager.getHistory();
 
         taskManager.removeTask(0); // Удаляем первый эпик со всеми подзадачами
-        epicTasks = taskManager.getEpicTasks();
+        taskManager.getEpicTasks();
         List<Task> historyTasksSecondOccur = taskManager.getHistory();
         assertNotEquals(historyTasksFirstOccur, historyTasksSecondOccur, "Задачи не удаляются из истории!!!");
     }
