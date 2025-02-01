@@ -2,15 +2,18 @@ package service;
 
 import model.*;
 
+import model.DateTimeFormat;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private static final String TITLE = "id,type,name,status,description,epic";
+    private static final String TITLE = "id,type,name,status,description,startTime,duration,epic";
     private final Path path;
 
     public FileBackedTaskManager(Path path) {
@@ -85,22 +88,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = fieldsOfTask[2];
         StatusTask statusTask = StatusTask.valueOf(fieldsOfTask[3]);
         String description = fieldsOfTask[4];
-
+        LocalDateTime startTime;
+        int duration;
         switch (typeTask) {
             case REG:
-                SingleTask singleTask = new SingleTask(name, description, statusTask);
+                startTime = LocalDateTime.parse(fieldsOfTask[5], DateTimeFormat.DATE_TIME_FORMAT);
+                duration = Integer.parseInt(fieldsOfTask[6]);
+                SingleTask singleTask = new SingleTask(name, description, statusTask, startTime, duration);
                 singleTask.setId(id);
                 return singleTask;
-            case EPIC:
+            case SUB:
+                Integer epicId = Integer.parseInt(fieldsOfTask[7]);
+                startTime = LocalDateTime.parse(fieldsOfTask[5], DateTimeFormat.DATE_TIME_FORMAT);
+                duration = Integer.parseInt(fieldsOfTask[6]);
+                SubTask subTask = new SubTask(name, description, startTime, duration, epicId, statusTask);
+                subTask.setId(id);
+                return subTask;
+            default:
                 EpicTask epicTask = new EpicTask(name, description);
                 epicTask.setStatus(statusTask);
                 epicTask.setId(id);
                 return epicTask;
-            default:
-                Integer epicId = Integer.parseInt(fieldsOfTask[5]);
-                SubTask subTask = new SubTask(name, description, epicId, statusTask);
-                subTask.setId(id);
-                return subTask;
         }
     }
 
@@ -139,6 +147,4 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super.clearSubTasks();
         save();
     }
-
-
 }

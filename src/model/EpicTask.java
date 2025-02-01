@@ -2,13 +2,19 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class EpicTask extends Task {
     private final List<SubTask> subTasks;
+    private LocalDateTime endTime;
+
+    private static final LocalDateTime NO_TIME = LocalDateTime.of(1, 1, 1, 0, 0);
 
     public EpicTask(String name, String description) {
         super(name, description, StatusTask.NEW);
         this.subTasks = new ArrayList<>();
+        this.endTime = LocalDateTime.of(1, 1, 1, 0, 0);
     }
 
     public List<SubTask> getSubTasks() {
@@ -30,8 +36,9 @@ public class EpicTask extends Task {
     }
 
     public void removeSubTask(SubTask subTask) {
-        this.subTasks.remove(subTask);
-        this.statusTask = calcStatus();
+        subTasks.remove(subTask);
+        statusTask = calcStatus();
+        calcTime();
     }
 
     public void modifySubTask(SubTask subTask) { // Добавляем новую подзадачу если её не было, или изменяем
@@ -45,16 +52,38 @@ public class EpicTask extends Task {
         if (!findSubTask) {
             this.subTasks.add(subTask);
         }
+
         this.statusTask = calcStatus();
+        calcTime();
     }
 
     private boolean isAllSubTasksByStatusTask(StatusTask statusTask) {
-        for (SubTask subTask : this.subTasks) {
-            if (!subTask.getStatusTask().equals(statusTask)) {
-                return false;
-            }
+        return subTasks.stream()
+                       .allMatch(subTask -> subTask.getStatusTask().equals(statusTask));
+    }
+
+    public void calcTime() {
+        if (this.subTasks.isEmpty()) {
+            setTimeFields(NO_TIME, NO_TIME, Duration.ofMinutes(0));
+            return;
         }
-        return true;
+        LocalDateTime startTime = subTasks.stream()
+                                          .map(Task::getStartTime)
+                                          .filter(time -> !time.isEqual(NO_TIME))
+                                          .min(LocalDateTime::compareTo)
+                                          .orElse(NO_TIME);
+
+        LocalDateTime endTime = subTasks.stream()
+                                        .map(Task::getEndTime)
+                                        .filter(time -> !time.isEqual(NO_TIME))
+                                        .max(LocalDateTime::compareTo)
+                                        .orElse(NO_TIME);
+
+        Duration duration = subTasks.stream()
+                                    .map(Task::getDuration)
+                                    .reduce(Duration.ZERO, Duration::plus);
+
+        setTimeFields(startTime, endTime, duration);
     }
 
     public StatusTask calcStatus() {
@@ -67,13 +96,19 @@ public class EpicTask extends Task {
         }
     }
 
+    private void setTimeFields(LocalDateTime startTime, LocalDateTime endTime, Duration duration) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.duration = duration;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s",
-                this.getId(),
-                this.getTypeTask(),
-                this.getName(),
-                this.getStatusTask(),
-                this.getDescription());
+        return String.format("%d,%s,%s,%s,%s", this.getId(), this.getTypeTask(), this.getName(), this.getStatusTask(), this.getDescription());
     }
 }

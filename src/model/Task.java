@@ -1,17 +1,31 @@
 package model;
 
 import java.util.Objects;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public abstract class Task {
     private int id;
     private final String name;
     private final String description;
     protected StatusTask statusTask;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
     public Task(String name, String description, StatusTask statusTask) { // Конструктор с установкой статуса
         this.name = name;
         this.description = description;
         this.statusTask = statusTask;
+        this.duration = Duration.ZERO;
+        this.startTime = LocalDateTime.of(1, 1, 1, 0, 0);
+    }
+
+    public Task(String name, String description, StatusTask statusTask, LocalDateTime startTime, int durationInMinutes) {
+        this.name = name;
+        this.description = description;
+        this.statusTask = statusTask;
+        this.duration = Duration.ofMinutes(durationInMinutes);
+        this.startTime = startTime;
     }
 
     public void setId(int id) {
@@ -32,6 +46,18 @@ public abstract class Task {
 
     public StatusTask getStatusTask() {
         return statusTask;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
     }
 
     @Override
