@@ -28,7 +28,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         }
     }
 
-    private void clearTasks(){
+    private void clearTasks() {
         taskManager.clearSingleTasks();
         taskManager.clearEpicTasks();
         taskManager.clearSubTasks();
@@ -42,7 +42,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
     @Test
     void saveAndLoadEmptyFile() {
-        clearTasks(); 
+        clearTasks();
         Assertions.assertTrue(taskManager.getSingleTasks().isEmpty(), "Список обычных задач не пуст");
         Assertions.assertTrue(taskManager.getEpicTasks().isEmpty(), "Список эпиков задач не пуст");
         Assertions.assertTrue(taskManager.getSubTasks().isEmpty(), "Список подзадач задач не пуст");
@@ -64,16 +64,27 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
         String[] linesOfFile = Files.readString(tempFile.toPath()).split("\n");
 
-        Assertions.assertEquals("id,type,name,status,description,startTime,duration,epic", linesOfFile[0], "Ошибка записи заголовка");
-        Assertions.assertEquals(taskManager.getTaskById(singleTask1.getId()).toString(), linesOfFile[1], "Ошибка записи обычной задачи");
-        Assertions.assertEquals(taskManager.getTaskById(epicTask1.getId()).toString(), linesOfFile[2], "Ошибка записи эпика");
-        Assertions.assertEquals(taskManager.getTaskById(subTask1.getId()).toString(), linesOfFile[3], "Ошибка записи подзадачи");
+        Assertions.assertEquals("id,type,name,status,description,startTime,duration,epic",
+                                linesOfFile[0],
+                                "Ошибка записи заголовка");
+        Assertions.assertEquals(taskManager.getTaskById(singleTask1.getId()).toString(),
+                                linesOfFile[1],
+                                "Ошибка записи обычной задачи");
+        Assertions.assertEquals(taskManager.getTaskById(epicTask1.getId()).toString(),
+                                linesOfFile[2],
+                                "Ошибка записи эпика");
+        Assertions.assertEquals(taskManager.getTaskById(subTask1.getId()).toString(),
+                                linesOfFile[3],
+                                "Ошибка записи подзадачи");
     }
 
     @Test
     void readTasksFromFile() {
         clearTasks();
-        String[] content = new String[]{"id,type,name,status,description,startTime,duration,epic", "0,REG,CommonTask1,NEW,Common task 1,00:00 01.01.0001,0", "1,EPIC,EpicTask1,IN_PROGRESS,Epic task 1", "2,SUB,SubTask1,IN_PROGRESS,Subtask 1,00:00 01.01.0001,0,1"};
+        String[] content = new String[]{"id,type,name,status,description,startTime,duration,epic",
+                                        "1,REG,CommonTask1,NEW,Common task 1,00:00 01.01.0001,0",
+                                        "2,EPIC,EpicTask1,IN_PROGRESS,Epic task 1",
+                                        "3,SUB,SubTask1,IN_PROGRESS,Subtask 1,00:00 01.01.0001,0,2"};
 
         try (Writer fileWriter = new FileWriter(tempFile, StandardCharsets.UTF_8)) {
             fileWriter.write(String.join("\n", content));
@@ -83,9 +94,9 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
         taskManager = FileBackedTaskManager.loadFromFile(tempFile.toPath());
 
-        Assertions.assertEquals(content[1], taskManager.getTaskById(0).toString(), "Ошибка чтения обычной задачи");
-        Assertions.assertEquals(content[2], taskManager.getTaskById(1).toString(), "Ошибка чтения эпика");
-        Assertions.assertEquals(content[3], taskManager.getTaskById(2).toString(), "Ошибка чтения подзадачи");
+        Assertions.assertEquals(content[1], taskManager.getTaskById(1).toString(), "Ошибка чтения обычной задачи");
+        Assertions.assertEquals(content[2], taskManager.getTaskById(2).toString(), "Ошибка чтения эпика");
+        Assertions.assertEquals(content[3], taskManager.getTaskById(3).toString(), "Ошибка чтения подзадачи");
 
     }
 

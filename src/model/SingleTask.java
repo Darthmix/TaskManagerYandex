@@ -12,14 +12,14 @@ public class SingleTask extends Task {
         super(name, description, StatusTask.NEW, startTime, durationInMinutes);
     }
 
-    public SingleTask(String name, String description, StatusTask statusTask, LocalDateTime startTime, int durationInMinutes) {
+    public SingleTask(String name,
+                      String description,
+                      StatusTask statusTask,
+                      LocalDateTime startTime,
+                      int durationInMinutes) {
         super(name, description, statusTask, startTime, durationInMinutes);
     }
 
-    @Override
-    public StatusTask getStatusTask() {
-        return statusTask;
-    }
 
     public void setStatus(StatusTask statusTask) {
         this.statusTask = statusTask;
@@ -32,6 +32,13 @@ public class SingleTask extends Task {
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,%s,%s", this.getId(), this.getTypeTask(), this.getName(), this.getStatusTask(), this.getDescription(), startTime.format(DateTimeFormat.DATE_TIME_FORMAT), duration.toMinutes());
+        return String.format("%d,%s,%s,%s,%s,%s,%s",
+                             this.getId(),
+                             this.getTypeTask(),
+                             this.getName(),
+                             this.getStatusTask(),
+                             this.getDescription(),
+                             startTime.format(DateTimeFormat.DATE_TIME_FORMAT),
+                             duration.toMinutes());
     }
 }
