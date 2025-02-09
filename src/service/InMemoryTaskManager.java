@@ -36,7 +36,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private List<Task> getTasksByType(TypeTask typeTask) {
-        return taskById.values().stream()
+        return taskById.values()
+                       .stream()
                        .filter(task -> task.getTypeTask().equals(typeTask))
                        .peek(historyManager::add)
                        .collect(Collectors.toList());
@@ -64,6 +65,7 @@ public class InMemoryTaskManager implements TaskManager {
             case REG:
                 taskById.remove(task.getId());
                 historyManager.remove(task.getId());
+                removePrioritizedTasks(task);
                 break;
             case SUB:
                 SubTask subTask = (SubTask) task;
@@ -73,20 +75,19 @@ public class InMemoryTaskManager implements TaskManager {
                 break;
             case EPIC:
                 EpicTask epicTask = (EpicTask) task;
-                epicTask.getSubTasks().stream()
-                        .forEach(subTaskTmp -> {
-                            taskById.remove(subTaskTmp.getId());
-                            historyManager.remove(subTaskTmp.getId());
-                        });
+                epicTask.getSubTasks().stream().forEach(subTaskTmp -> {
+                    taskById.remove(subTaskTmp.getId());
+                    historyManager.remove(subTaskTmp.getId());
+                });
                 taskById.remove(task.getId());
                 historyManager.remove(task.getId());
+                removePrioritizedTasks(task);
                 break;
         }
     }
 
     private void clearByType(TypeTask typeTask) {
-        getTasksByType(typeTask).stream()
-                                .forEach(task -> removeTask(task.getId()));
+        getTasksByType(typeTask).stream().forEach(task -> removeTask(task.getId()));
     }
 
     @Override
@@ -143,7 +144,7 @@ public class InMemoryTaskManager implements TaskManager {
             case SUB:
                 if (!isNoOverlap(task)) throw new TaskTimeOverlapException(overlapError);
                 taskById.put(task.getId(), task);
-                prioritizedTasks.remove(task.getId());
+                removePrioritizedTasks(task);
                 SubTask subTask = (SubTask) task;
                 EpicTask epicTask = (EpicTask) taskById.get(subTask.getEpicId());
                 epicTask.modifySubTask(subTask);
@@ -152,7 +153,7 @@ public class InMemoryTaskManager implements TaskManager {
             case REG:
                 if (!isNoOverlap(task)) throw new TaskTimeOverlapException(overlapError);
                 taskById.put(task.getId(), task);
-                prioritizedTasks.remove(task.getId());
+                removePrioritizedTasks(task);
                 addByPriority(task);
             default:
                 taskById.put(task.getId(), task);
@@ -160,8 +161,18 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    private void removePrioritizedTasks(Task task) {
+        if (prioritizedTasks.contains(task)) {
+            prioritizedTasks.stream()
+                            .filter(taskTmp -> taskTmp.getId() != task.getId())
+                            .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Task::getStartTime))));
+            ;
+        }
+    }
+
+
     private Integer getNextFreeId() {
-        return taskIdGenerator++;
+        return ++taskIdGenerator;
     }
 
     public void setNextFreeId(Integer id) {
@@ -180,10 +191,13 @@ public class InMemoryTaskManager implements TaskManager {
             return true; // Задачи без времени не попадают в проверку и не будут учтены при приоритезации
         // Для каждой приоритезированной задачи проверяем попадает ли новая задача во временные рамки
         return prioritizedTasks.stream()
-                               .allMatch(taskPrior -> taskPrior.getStartTime().isAfter(end) ||
-                                       taskPrior.getStartTime().isEqual(end) ||
-                                       taskPrior.getEndTime().isBefore(start) ||
-                                       taskPrior.getEndTime().isEqual(start));
+                               .allMatch(taskPrior -> (taskPrior.getStartTime().isEqual(start) &&
+                                                       taskPrior.getEndTime().isEqual(end)) ||
+                                                      taskPrior.getStartTime().isAfter(end) ||
+                                                      taskPrior.getStartTime().isEqual(end) ||
+                                                      taskPrior.getEndTime().isBefore(start) ||
+                                                      taskPrior.getEndTime().isEqual(start));
+
     }
 
     public List<Task> getPrioritizedTasks() {

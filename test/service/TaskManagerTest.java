@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
 
@@ -50,7 +49,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createTask(singleTaskNew);
 
         assertNotNull(singleTaskNew, "Задача не найдена!!!!");
-        assertEquals(taskManager.getSingleTasks().get(1), taskManager.getTaskById(4), "Задачи не совпадают!!!");
+        assertEquals(taskManager.getSingleTasks().get(1), taskManager.getTaskById(5), "Задачи не совпадают!!!");
     }
 
     @Test
@@ -104,23 +103,38 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         subTask2 = new SubTask("SubTask2", "Subtask 2", startTime.plusHours(1), 30, epicTask.getId());
         taskManager.createTask(subTask2);
 
-        assertEquals(startTime, taskManager.getTaskById(1).getStartTime(), "Стартовое время эпика не верно");
-        assertEquals(subTask2.getEndTime(), taskManager.getTaskById(1).getEndTime(), "Финальное время эпика не верно");
+        assertEquals(startTime, taskManager.getTaskById(2).getStartTime(), "Стартовое время эпика не верно");
+        assertEquals(subTask2.getEndTime(), taskManager.getTaskById(2).getEndTime(), "Финальное время эпика не верно");
 
         Duration duration = subTask1.getDuration().plus(subTask2.getDuration());
-        assertEquals(duration, taskManager.getTaskById(1).getDuration(), "Длительность эпике не совпадает с длительностью подзадач");
+        assertEquals(duration,
+                     taskManager.getTaskById(2).getDuration(),
+                     "Длительность эпике не совпадает с длительностью подзадач");
     }
 
     @Test
     void checkTimeOverlap() {
         SingleTask singleTask1 = new SingleTask("CommonTask1", "Common task 1", startTime, 30);
         taskManager.createTask(singleTask1);
-        SingleTask singleTask2 = new SingleTask("CommonTask2", "Common task 2", startTime.plus(Duration.ofMinutes(15)), 30);
-        SingleTask singleTask3 = new SingleTask("CommonTask3", "Common task 3", startTime.minus(Duration.ofMinutes(15)), 30);
-        SingleTask singleTask4 = new SingleTask("CommonTask3", "Common task 3", startTime.minus(Duration.ofMinutes(35)), 30);
+        SingleTask singleTask2 = new SingleTask("CommonTask2",
+                                                "Common task 2",
+                                                startTime.plus(Duration.ofMinutes(15)),
+                                                30);
+        SingleTask singleTask3 = new SingleTask("CommonTask3",
+                                                "Common task 3",
+                                                startTime.minus(Duration.ofMinutes(15)),
+                                                30);
+        SingleTask singleTask4 = new SingleTask("CommonTask3",
+                                                "Common task 3",
+                                                startTime.minus(Duration.ofMinutes(35)),
+                                                30);
 
-        assertThrows(TaskTimeOverlapException.class, () -> taskManager.createTask(singleTask2), "Пересечение по времени не выявлено");
-        assertThrows(TaskTimeOverlapException.class, () -> taskManager.createTask(singleTask3), "Пересечение по времени не выявлено");
+        assertThrows(TaskTimeOverlapException.class,
+                     () -> taskManager.createTask(singleTask2),
+                     "Пересечение по времени не выявлено");
+        assertThrows(TaskTimeOverlapException.class,
+                     () -> taskManager.createTask(singleTask3),
+                     "Пересечение по времени не выявлено");
         assertDoesNotThrow(() -> taskManager.createTask(singleTask4), "Пересечение по времени не выявлено");
     }
 
@@ -134,9 +148,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createTask(singleTaskWithTime2);
         SingleTask singleTaskWithTime3 = new SingleTask("CommonTask2", "Common task 2", startTime.minusHours(1), 30);
         taskManager.createTask(singleTaskWithTime3);
-        assertFalse(taskManager.getPrioritizedTasks().contains(singleTaskNoTime), "Задача без времени содержится в приоритезированных задачах");
-        assertEquals(singleTaskWithTime3, taskManager.getPrioritizedTasks().get(0), "Не правильно определена первая задача");
-        assertEquals(singleTaskWithTime2, taskManager.getPrioritizedTasks().get(2), "Не правильно определена последняя задача");
+        assertFalse(taskManager.getPrioritizedTasks().contains(singleTaskNoTime),
+                    "Задача без времени содержится в приоритезированных задачах");
+        assertEquals(singleTaskWithTime3,
+                     taskManager.getPrioritizedTasks().get(0),
+                     "Не правильно определена первая задача");
+        assertEquals(singleTaskWithTime2,
+                     taskManager.getPrioritizedTasks().get(2),
+                     "Не правильно определена последняя задача");
 
     }
 

@@ -30,7 +30,7 @@ class InMemoryHistoryManagerTest {
 
         Assertions.assertNotNull(taskManager.getSingleTasks(), "Задачи не найдены!!!!");
 
-        SingleTask singleTaskChanged = (SingleTask) taskManager.getTaskById(0);
+        SingleTask singleTaskChanged = (SingleTask) taskManager.getTaskById(1);
         singleTaskChanged.setStatus(StatusTask.IN_PROGRESS);
         taskManager.updateTask(singleTaskChanged);
 
@@ -61,7 +61,7 @@ class InMemoryHistoryManagerTest {
 
         List<Task> historyTasksFirstOccur = taskManager.getHistory();
 
-        taskManager.removeTask(0); // Удаляем первый эпик со всеми подзадачами
+        taskManager.removeTask(1); // Удаляем первый эпик со всеми подзадачами
         taskManager.getEpicTasks();
         List<Task> historyTasksSecondOccur = taskManager.getHistory();
         assertNotEquals(historyTasksFirstOccur, historyTasksSecondOccur, "Задачи не удаляются из истории!!!");
