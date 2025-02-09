@@ -19,8 +19,8 @@ public class PrioritizedHandler extends BaseHttpHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         try {
-            String requestMethod = httpExchange.getRequestMethod();
-            if (requestMethod.equals("GET")) {
+            HttpRequestMethods requestMethod = HttpRequestMethods.valueOf(httpExchange.getRequestMethod());
+            if (requestMethod.equals(HttpRequestMethods.GET)) {
                 getByRequest(httpExchange);
             } else {
                 System.out.println("Такой метод запроса не возможен");

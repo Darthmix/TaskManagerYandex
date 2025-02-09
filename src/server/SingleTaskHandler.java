@@ -23,18 +23,17 @@ public class SingleTaskHandler extends BaseHttpHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         try {
-            String requestMethod = httpExchange.getRequestMethod();
+            HttpRequestMethods requestMethod = HttpRequestMethods.valueOf(httpExchange.getRequestMethod());
             switch (requestMethod) {
-                case "GET":
+                case GET:
                     getByRequest(httpExchange);
                     break;
-                case "POST":
+                case POST:
                     postByRequest(httpExchange);
                     break;
-                case "DELETE":
+                case DELETE:
                     deleteByRequest(httpExchange);
                     break;
-                default:
             }
         } catch (TaskTimeOverlapException taskTimeOverlapException) {
             System.out.println(taskTimeOverlapException.getMessage());
@@ -69,21 +68,16 @@ public class SingleTaskHandler extends BaseHttpHandler implements HttpHandler {
 
     protected void getByRequest(HttpExchange httpExchange) throws IOException, NotFoundException {
         String path = httpExchange.getRequestURI().getPath();
-        List<Task> singleTasks = taskManager.getSingleTasks();
         if (Pattern.matches("^/singletasks$", path)) {
-            String response = getGson().toJson(singleTasks);
+            String response = getGson().toJson(taskManager.getSingleTasks());
             sendResponse(httpExchange, response);
             return;
         }
         if (Pattern.matches("^/singletasks/\\d+$", path)) {
             Integer id = parseTaskId(path.replaceFirst("/singletasks/", ""));
             if (id != -1) {
-                Optional<Task> singleTask = singleTasks.stream().filter(taskTmp -> taskTmp.getId() == id).findFirst();
-                if (singleTask.isPresent()) {
-                    sendResponse(httpExchange, getGson().toJson(singleTask.get()));
-                } else {
-                    throw new NotFoundException("Задача не найдена в списке. id: " + id);
-                }
+                Task singleTask = taskManager.getTaskById(id);
+                sendResponse(httpExchange, getGson().toJson(singleTask));
             }
         } else {
             sendMethodNotAllowed(httpExchange);

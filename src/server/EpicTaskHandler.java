@@ -24,15 +24,15 @@ public class EpicTaskHandler extends BaseHttpHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         try {
-            String requestMethod = httpExchange.getRequestMethod();
+            HttpRequestMethods requestMethod = HttpRequestMethods.valueOf(httpExchange.getRequestMethod());
             switch (requestMethod) {
-                case "GET":
+                case GET:
                     getByRequest(httpExchange);
                     break;
-                case "POST":
+                case POST:
                     postByRequest(httpExchange);
                     break;
-                case "DELETE":
+                case DELETE:
                     deleteByRequest(httpExchange);
                     break;
             }
