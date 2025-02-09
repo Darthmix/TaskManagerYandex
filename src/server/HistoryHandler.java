@@ -20,7 +20,7 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         try {
             HttpRequestMethods requestMethod = HttpRequestMethods.valueOf(httpExchange.getRequestMethod());
-            if (requestMethod == HttpRequestMethods.GET ) {
+            if (requestMethod.equals(HttpRequestMethods.GET)) {
                 getByRequest(httpExchange);
             } else {
                 System.out.println("Такой метод запроса не возможен");
